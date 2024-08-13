@@ -72,7 +72,9 @@ public class BookService {
     }
 
     public int currentLoansCount(String userEmail) {
-        return checkoutRepository.findBooksByUserEmail(userEmail).size();
+        List<Checkout> checkoutList = checkoutRepository.findBooksByUserEmail(userEmail);
+        
+        return checkoutList != null ? checkoutRepository.findBooksByUserEmail(userEmail).size() : 0;
     }
 
     public List<ShelfCurrentLoansResponse> currentLoans(String userEmail) throws Exception {

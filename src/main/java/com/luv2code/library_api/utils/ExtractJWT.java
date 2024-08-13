@@ -4,14 +4,22 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import com.luv2code.library_api.model.IdToken;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class ExtractJWT {
+
+  private static final String URL_USERINFO = "https://dev-l625782tnvb0qtsd.us.auth0.com/userinfo";
 
   public static String payloadJWTExtraction(String token, String extraction) {
 
@@ -20,7 +28,7 @@ public class ExtractJWT {
     String[] chunks = parsed.split("\\.");
     Base64.Decoder decoder = Base64.getUrlDecoder();
 
-    String payload = new String(decoder.decode(chunks[0]));
+    String payload = new String(decoder.decode(chunks[1]));
 
     String[] entries = payload.split(",");
     Map<String, String> map = new HashMap<String, String>();
@@ -45,20 +53,28 @@ public class ExtractJWT {
     return null;
   }
 
-  public static String Validate(String jwtToken) {
-    String AUTH0_SECRET = "50724c44a0af1aaea7c6488b487c4b21ca518a694b296dbc3796a945ba5d8ab9";
-    String AUTH0_ISSUER_BASE_URL = "https://dev-l625782tnvb0qtsd.us.auth0.com";
-    Algorithm algorithm = Algorithm.HMAC256(AUTH0_SECRET);
-    JWTVerifier verifier = JWT.require(algorithm)
-        .withIssuer(AUTH0_ISSUER_BASE_URL)
-        .build();
-
+  public static String emailJWTExtraction(String token) {
     try {
-      String parsed = jwtToken.replace("Bearer ", "");
-      DecodedJWT decodedJWT = verifier.verify(parsed);
-      Claim claim = decodedJWT.getClaim("userId");
-      return claim.asString();
-    } catch (JWTVerificationException e) {
+      // HttpHeaders
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
+      headers.set("Authorization", token);
+
+      // HttpEntity<String>: To get result as String.
+      HttpEntity<String> entity = new HttpEntity<>(headers);
+
+      // RestTemplate
+      RestTemplate restTemplate = new RestTemplate();
+
+      // Send request with GET method, and Headers.
+      ResponseEntity<IdToken> response = restTemplate.exchange(URL_USERINFO, //
+          HttpMethod.GET, entity, IdToken.class);
+
+      IdToken result = response.getBody();
+
+      System.out.println(result.getEmail());
+      return result.getEmail();
+    } catch (HttpClientErrorException e) {
       System.out.println(e.getMessage());
     }
 
