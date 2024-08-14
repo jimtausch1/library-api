@@ -16,12 +16,11 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config,
-                                                     CorsRegistry cors) {
+            CorsRegistry cors) {
         HttpMethod[] theUnsupportedActions = {
                 HttpMethod.POST,
                 HttpMethod.PATCH,
-                HttpMethod.DELETE,
-                HttpMethod.PUT};
+                HttpMethod.DELETE };
 
         config.exposeIdsFor(Book.class);
         config.exposeIdsFor(Review.class);
@@ -37,13 +36,12 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
     }
 
     private void disableHttpMethods(@SuppressWarnings("rawtypes") Class theClass,
-                                    RepositoryRestConfiguration config,
-                                    HttpMethod[] theUnsupportedActions) {
+            RepositoryRestConfiguration config,
+            HttpMethod[] theUnsupportedActions) {
         config.getExposureConfiguration()
                 .forDomainType(theClass)
-                .withItemExposure((metdata, httpMethods) ->
-                        httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metdata, httpMethods) ->
-                        httpMethods.disable(theUnsupportedActions));
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
+                .withCollectionExposure(
+                        (metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
     }
 }
