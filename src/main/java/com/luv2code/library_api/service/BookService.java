@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.library_api.entity.Book;
 import com.luv2code.library_api.entity.Checkout;
@@ -17,8 +18,6 @@ import com.luv2code.library_api.model.ShelfCurrentLoansResponse;
 import com.luv2code.library_api.repositories.BookRepository;
 import com.luv2code.library_api.repositories.CheckoutRepository;
 import com.luv2code.library_api.repositories.HistoryRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -31,13 +30,13 @@ public class BookService {
     private HistoryRepository historyRepository;
 
     public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository,
-                       HistoryRepository historyRepository) {
+            HistoryRepository historyRepository) {
         this.bookRepository = bookRepository;
         this.checkoutRepository = checkoutRepository;
         this.historyRepository = historyRepository;
     }
 
-    public Book checkoutBook (String userEmail, Long bookId) throws Exception {
+    public Book checkoutBook(String userEmail, Long bookId) throws Exception {
 
         Optional<Book> book = bookRepository.findById(bookId);
 
@@ -54,8 +53,7 @@ public class BookService {
                 userEmail,
                 LocalDate.now().toString(),
                 LocalDate.now().plusDays(7).toString(),
-                book.get().getId()
-        );
+                book.get().getId());
 
         checkoutRepository.save(checkout);
 
@@ -73,7 +71,7 @@ public class BookService {
 
     public int currentLoansCount(String userEmail) {
         List<Checkout> checkoutList = checkoutRepository.findBooksByUserEmail(userEmail);
-        
+
         return checkoutList != null ? checkoutRepository.findBooksByUserEmail(userEmail).size() : 0;
     }
 
@@ -84,7 +82,7 @@ public class BookService {
         List<Checkout> checkoutList = checkoutRepository.findBooksByUserEmail(userEmail);
         List<Long> bookIdList = new ArrayList<>();
 
-        for (Checkout i: checkoutList) {
+        for (Checkout i : checkoutList) {
             bookIdList.add(i.getBookId());
         }
 
@@ -112,7 +110,7 @@ public class BookService {
         return shelfCurrentLoansResponses;
     }
 
-    public void returnBook (String userEmail, Long bookId) throws Exception {
+    public void returnBook(String userEmail, Long bookId) throws Exception {
 
         Optional<Book> book = bookRepository.findById(bookId);
 
@@ -134,8 +132,7 @@ public class BookService {
                 book.get().getTitle(),
                 book.get().getAuthor(),
                 book.get().getDescription(),
-                book.get().getImg()
-        );
+                book.get().getImg());
 
         historyRepository.save(history);
     }

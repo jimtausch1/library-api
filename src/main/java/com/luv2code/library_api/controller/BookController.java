@@ -29,8 +29,7 @@ public class BookController {
 
     @GetMapping("/secure/currentloans")
     public List<ShelfCurrentLoansResponse> currentLoans(@RequestHeader(value = "Authorization") String token)
-        throws Exception
-    {
+            throws Exception {
         String userEmail = ExtractJWT.emailJWTExtraction(token);
         return bookService.currentLoans(userEmail);
     }
@@ -43,28 +42,28 @@ public class BookController {
 
     @GetMapping("/secure/ischeckedout/byuser")
     public Boolean checkoutBookByUser(@RequestHeader(value = "Authorization") String token,
-                                      @RequestParam Long bookId) {
+            @RequestParam Long bookId) {
         String userEmail = ExtractJWT.emailJWTExtraction(token);
         return bookService.checkoutBookByUser(userEmail, bookId);
     }
 
-    @PutMapping("/secure/checkout")
-    public Book checkoutBook (@RequestHeader(value = "Authorization") String token,
-                              @RequestParam Long bookId) throws Exception {
+    @GetMapping("/secure/checkout")
+    public Book checkoutBook(@RequestHeader(value = "Authorization") String token,
+            @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.emailJWTExtraction(token);
         return bookService.checkoutBook(userEmail, bookId);
     }
 
     @PutMapping("/secure/return")
     public void returnBook(@RequestHeader(value = "Authorization") String token,
-                           @RequestParam Long bookId) throws Exception {
+            @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.emailJWTExtraction(token);
         bookService.returnBook(userEmail, bookId);
     }
 
     @PutMapping("/secure/renew/loan")
     public void renewLoan(@RequestHeader(value = "Authorization") String token,
-                          @RequestParam Long bookId) throws Exception {
+            @RequestParam Long bookId) throws Exception {
         String userEmail = ExtractJWT.emailJWTExtraction(token);
         bookService.renewLoan(userEmail, bookId);
     }

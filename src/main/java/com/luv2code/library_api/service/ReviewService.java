@@ -5,12 +5,11 @@ import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.library_api.entity.Review;
 import com.luv2code.library_api.model.ReviewRequest;
 import com.luv2code.library_api.repositories.ReviewRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -35,8 +34,7 @@ public class ReviewService {
         review.setUserEmail(userEmail);
         if (reviewRequest.getReviewDescription().isPresent()) {
             review.setReviewDescription(reviewRequest.getReviewDescription().map(
-                    Object::toString
-            ).orElse(null));
+                    Object::toString).orElse(null));
         }
         review.setDate(Date.valueOf(LocalDate.now()));
         reviewRepository.save(review);
