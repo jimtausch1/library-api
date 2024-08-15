@@ -3,6 +3,7 @@ package com.luv2code.library_api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luv2code.library_api.entity.Book;
+import com.luv2code.library_api.entity.History;
 import com.luv2code.library_api.model.ShelfCurrentLoansResponse;
 import com.luv2code.library_api.service.BookService;
 import com.luv2code.library_api.utils.ExtractJWT;
@@ -25,6 +27,13 @@ public class BookController {
     @Autowired
     public BookController(BookService bookService) {
         this.bookService = bookService;
+    }
+
+    @GetMapping("/secure/userhistory")
+    public Page<History> userhistory(@RequestHeader(value = "Authorization") String token)
+            throws Exception {
+        String userEmail = ExtractJWT.emailJWTExtraction(token);
+        return bookService.userHistory(userEmail);
     }
 
     @GetMapping("/secure/currentloans")

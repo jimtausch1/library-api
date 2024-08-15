@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -154,6 +157,12 @@ public class BookService {
             validateCheckout.setReturnDate(LocalDate.now().plusDays(7).toString());
             checkoutRepository.save(validateCheckout);
         }
+    }
+
+    public Page<History> userHistory(String userEmail) throws Exception {
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<History> history = historyRepository.findBooksByUserEmail(userEmail, pageable);
+        return history;
     }
 
 }
