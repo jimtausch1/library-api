@@ -33,6 +33,12 @@ public class MessagesController {
         return messagesService.getMessages(userEmail);
     }
 
+    @GetMapping("/secure/search/open")
+    public Page<Message> getOpenMessages(@RequestHeader(value = "Authorization") String token)
+            throws Exception {
+        return messagesService.getOpenMessages(false);
+    }
+
     @PostMapping("/secure/add/message")
     public void postMessage(@RequestHeader(value = "Authorization") String token,
             @RequestBody Message messageRequest) {

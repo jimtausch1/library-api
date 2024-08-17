@@ -30,6 +30,12 @@ public class MessagesService {
     return messages;
   }
 
+  public Page<Message> getOpenMessages(boolean isClosed) throws Exception {
+    Pageable pageable = PageRequest.of(0, 5);
+    Page<Message> messages = messageRepository.findByClosed(isClosed, pageable);
+    return messages;
+  }
+
   public void postMessage(Message messageRequest, String userEmail) {
     Message message = new Message(messageRequest.getTitle(), messageRequest.getQuestion());
     message.setUserEmail(userEmail);
