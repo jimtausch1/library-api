@@ -50,10 +50,6 @@ public class MessagesController {
     public void putMessage(@RequestHeader(value = "Authorization") String token,
             @RequestBody AdminQuestionRequest adminQuestionRequest) throws Exception {
         String userEmail = ExtractJWT.emailJWTExtraction(token);
-        String admin = ExtractJWT.payloadJWTExtraction(token, "\"userType\"");
-        if (admin == null || !admin.equals("admin")) {
-            throw new Exception("Administration page only.");
-        }
         messagesService.putMessage(adminQuestionRequest, userEmail);
     }
 
